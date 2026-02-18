@@ -1,0 +1,9 @@
+_format_version: "3.0"
+
+services:
+  - name: chat-service
+    url: http://host.docker.internal:8081
+    routes:
+      - name: chat-route
+        paths:
+          - /api

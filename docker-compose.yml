@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  kong:
+    image: kong:3.6
+    container_name: kong
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/usr/local/kong/declarative/kong.yml
+    ports:
+      - "8000:8000"   # Proxy (API traffic)
+      - "8001:8001"   # Admin API
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
