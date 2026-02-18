@@ -1,5 +1,63 @@
 version: "3.8"
+
 services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: chatbot_mysql
+    environment:
+      MYSQL_DATABASE: chatbot_db
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: chatbot_user
+      MYSQL_PASSWORD: chatbot_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - chatbot_network
+
+  # Backend Service (Spring Boot)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chatbot_backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/chatbot_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      GROQ_API_KEY: ${GROQ_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - chatbot_network
+    restart: unless-stopped
+
+  # Frontend Service (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: chatbot_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://backend:8080/api
+    depends_on:
+      - backend
+    networks:
+      - chatbot_network
+    restart: unless-stopped
+
+  # Kong API Gateway (Optional)
   kong:
     image: kong:3.6
     container_name: kong
@@ -11,3 +69,13 @@ services:
       - "8001:8001"   # Admin API
     volumes:
       - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    networks:
+      - chatbot_network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  chatbot_network:
+    driver: bridge

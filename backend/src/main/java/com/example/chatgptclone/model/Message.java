@@ -1,29 +1,30 @@
 package com.example.chatgptclone.model;
+// Message.java
+public class Message {
+    private String role;
+    private String content;
 
-public class Messages {
-    private String Role;
-    private String Contant;
+    public Message() {} // Jackson needs a no-arg constructor
 
-    public Messages() {
-    }
-    public Messages(String role, String contant) {
-        Role = role;
-        Contant = contant;
-    }
 
     public String getRole() {
-        return Role;
+        return role;
     }
 
     public void setRole(String role) {
-        Role = role;
+        this.role = role;
     }
 
-    public String getContant() {
-        return Contant;
+    public String getContent() {
+        return content;
     }
 
-    public void setContant(String contant) {
-        Contant = contant;
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{role='" + role + "', content='" + content + "'}";
     }
 }

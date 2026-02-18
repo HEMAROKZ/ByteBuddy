@@ -23,7 +23,7 @@ setx GROQ_API_KEY "sk-..."   # Windows (new shell after)
 cd backend
 gradle bootRun
 ```
-Backend runs on http://localhost:8080
+Backend runs on http://localhost:8081
 
 ## 3) Run Frontend
 ```
